@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Cam Bike Dashboard</title>
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('../image/background.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Aligner le contenu en haut sur les téléphones */
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    font-size: 3em;
+    margin-top: 20px; /* Ajout de marge en haut */
+}
+
+.boxBP {
+    display: flex;
+    flex-direction: column; /* Mettre les boutons en colonne par défaut */
+    align-items: center; /* Centrer les éléments horizontalement */
+}
+
+.start-btn, .stop-btn, .process-btn {
+    width: 85vw; /* Prendre toute la largeur de l'écran sur les téléphones */
+    padding: 0.5em;
+    margin: 0.25em;
+    font-size: 2em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.start-btn, .process-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.stop-btn {
+    background-color: #FF0000;
+    color: white;
+}
+
+.start-btn:disabled, .stop-btn:disabled, .process-btn:disabled {
+    background-color: #ddd;
+    color: #777;
+    cursor: not-allowed;
+}
+
+/* Ajout de règles de média queries pour les téléphones */
+@media only screen and (min-width: 601px) {
+    .boxBP {
+        flex-direction: row; /* Mettre les boutons côte à côte sur les grands écrans */
+    }
+
+    /* Ajuster la largeur des boutons sur les grands écrans */
+    .start-btn, .stop-btn, .process-btn {
+        width: 10em;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <h1>Data Cam Bike Dashboard</h1>
+    <div class="boxBP">
+        <button id="cameraBtn" class="start-btn" onclick="toggleCamera()">Start Session</button>
+        <button id="processBtn" class="process-btn" onclick="toggleProcess()" disabled>Start Processing</button>
+    </div>
+    <div id="chartContainer"></div>
+
+        <script>
+        let cameraStarted = false;
+        let processDataRunning = false;
+
+        function toggleCamera() {
+            const cameraBtn = document.getElementById('cameraBtn');
+            const processBtn = document.getElementById('processBtn');
+
+            if (cameraStarted) {
+                // Demander confirmation pour arrêter la session
+                const stopConfirmation = confirm("Do you want to stop the session?");
+                if (stopConfirmation) {
+                    // Code pour arrêter la session
+                    console.log("Session stopped!");
+                    cameraStarted = false;
+                    processDataRunning = false;
+                    cameraBtn.textContent = "Start Session";
+                    cameraBtn.classList.remove("stop-btn");
+                    cameraBtn.classList.add("start-btn");
+                    processBtn.textContent = "Start Processing";
+                    processBtn.classList.remove("stop-btn");
+                    processBtn.classList.add("process-btn");
+                    processBtn.disabled=true;
+                    // Activer le bouton de traitement une fois que la session est arrêtée
+                }
+            } else {
+                // Code pour démarrer la session
+                console.log("Session started!");
+                cameraStarted = true;
+                cameraBtn.textContent = "Stop Session";
+                cameraBtn.classList.remove("start-btn");
+                cameraBtn.classList.add("stop-btn");
+                processBtn.disabled=false;
+                // Désactiver le bouton de traitement pendant la session
+            }
+        }
+
+        function toggleProcess() {
+            const processBtn = document.getElementById('processBtn');
+            const cameraBtn = document.getElementById('cameraBtn');
+
+            if (processDataRunning) {
+                // Demander confirmation pour arrêter le traitement des données
+                const stopConfirmation = confirm("Do you want to stop processing?");
+                if (stopConfirmation) {
+                    // Code pour arrêter le traitement des données
+                    console.log("Processing stopped!");
+                    processDataRunning = false;
+                    processBtn.textContent = "Start Processing";
+                    processBtn.classList.remove("stop-btn");
+                    processBtn.classList.add("process-btn");
+                    cameraBtn.textContent = "Start Session";
+                    cameraBtn.classList.remove("stop-btn");
+                    cameraBtn.classList.add("start-btn");
+                    // Activer le bouton de session une fois que le traitement est arrêté
+                    cameraBtn.disabled = false;
+                    processBtn.disabled = true;
+                }
+            } else {
+                if (cameraStarted) {
+                    // Code pour démarrer le traitement des données
+
+                    const stopConfirmation = confirm("Do you want to stop session?");
+                    if (stopConfirmation) {
+                        console.log("Session stopped!");
+                        console.log("Processing data...");
+                        processDataRunning = true;
+                        processBtn.textContent = "Stop Processing";
+                        processBtn.classList.remove("process-btn");
+                        processBtn.classList.add("stop-btn");
+                        // Désactiver le bouton de session pendant le traitement
+                        processBtn.disabled = false;
+                        cameraBtn.disabled = true;
+                        cameraBtn.textContent = "Start Session";
+                        cameraBtn.classList.remove("stop-btn");
+                        cameraBtn.classList.add("start-btn");
+                        cameraStarted = false
+                    }
+                } else {
+                    // La caméra doit être démarrée avant de traiter les données
+                    alert("Please start the session before processing data.");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
